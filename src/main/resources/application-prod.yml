@@ -11,6 +11,8 @@ management:
     readinessstate:
       enabled: true
 spring:
+  autoconfigure:
+    exclude:
   data:
     redis:
       host: redis_1
