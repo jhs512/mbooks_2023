@@ -46,7 +46,7 @@ public class ProductControllerTests {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(handler().handlerType(ProductController.class))
                 .andExpect(handler().methodName("showCreate"))
-                .andExpect(content().string(containsString("상품 등록")));
+                .andExpect(content().string(containsString("도서 등록")));
     }
 
     @Test
