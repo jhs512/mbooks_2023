@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-application-base-addi.yml
+application-secret.yml
 src/main/generated
