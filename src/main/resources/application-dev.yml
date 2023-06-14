@@ -1,6 +1,9 @@
 server:
   port: 8010
 spring:
+  sql:
+    init:
+      mode: always
   thymeleaf:
     cache: false
     prefix: file:src/main/resources/templates/
@@ -10,7 +13,7 @@ spring:
     restart:
       enabled: true
   datasource:
-    url: jdbc:mariadb://127.0.0.1:3306/final__2022_10_08__dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+    url: jdbc:mariadb://127.0.0.1:3306/mbooks__dev?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
     username: root
     password:
   jpa:

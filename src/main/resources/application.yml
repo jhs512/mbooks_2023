@@ -7,9 +7,6 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       - org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
-  sql:
-    init:
-      mode: always
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
   batch:
@@ -40,7 +37,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.ll.exam.final__2022_10_08.app: DEBUG
+    com.ll.exam.mbooks.app: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
     org.hibernate.orm.jdbc.extract: TRACE
 custom:
