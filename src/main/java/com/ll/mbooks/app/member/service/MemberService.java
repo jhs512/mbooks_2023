@@ -1,6 +1,7 @@
 package com.ll.mbooks.app.member.service;
 
 import com.ll.mbooks.app.AppConfig;
+import com.ll.mbooks.app.attr.service.AttrService;
 import com.ll.mbooks.app.base.dto.RsData;
 import com.ll.mbooks.app.base.entity.BaseEntity;
 import com.ll.mbooks.app.cash.entity.CashLog;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,6 +44,7 @@ public class MemberService {
     private final EmailService emailService;
     private final CashService cashService;
     private final JwtProvider jwtProvider;
+    private final AttrService attrService;
 
     @Transactional
     public Member join(String username, String password, String email, String nickname) {
@@ -124,13 +127,27 @@ public class MemberService {
     public RsData modifyPassword(Member member, String password, String oldPassword) {
         Optional<Member> opMember = memberRepository.findById(member.getId());
 
-        if (passwordEncoder.matches(oldPassword, opMember.get().getPassword()) == false) {
+        if (opMember.isEmpty()) return RsData.of("F-1", "존재하지 않는 회원입니다.");
+
+        if (!passwordEncoder.matches(oldPassword, opMember.get().getPassword())) {
             return RsData.of("F-1", "기존 비밀번호가 일치하지 않습니다.");
         }
 
         opMember.get().setPassword(passwordEncoder.encode(password));
 
+        setPasswordModifyDate(opMember.get(), LocalDateTime.now());
+
+        // log.debug("passwordModifyDate : {}", getPasswordModifyDate(opMember.get()));
+
         return RsData.of("S-1", "비밀번호가 변경되었습니다.");
+    }
+
+    private void setPasswordModifyDate(Member member, LocalDateTime now) {
+        attrService.set("member", member.getId(), "extra", "passwordModifyDate", now);
+    }
+
+    private LocalDateTime getPasswordModifyDate(Member member) {
+        return attrService.getAsLocalDatetime("member", member.getId(), "extra", "passwordModifyDate", member.getCreateDate());
     }
 
     @Transactional
@@ -197,7 +214,7 @@ public class MemberService {
     public String genAccessToken(Member member) {
         String accessToken = member.getAccessToken();
 
-        if (StringUtils.hasLength(accessToken) == false) {
+        if (!StringUtils.hasLength(accessToken)) {
             accessToken = jwtProvider.generateAccessToken(member.getAccessTokenClaims(), 60L * 60 * 24 * 365 * 100);
             member.setAccessToken(accessToken);
         }
