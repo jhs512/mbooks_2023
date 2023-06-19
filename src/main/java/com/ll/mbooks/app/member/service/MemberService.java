@@ -49,7 +49,7 @@ public class MemberService {
     @Transactional
     public Member join(String username, String password, String email, String nickname) {
         if (memberRepository.findByUsername(username).isPresent()) {
-            throw new AlreadyJoinException();
+            throw new AlreadyJoinException("%s(은)는 이미 사용중인 아이디 입니다.".formatted(username));
         }
 
         Member member = Member.builder()
@@ -136,8 +136,6 @@ public class MemberService {
         opMember.get().setPassword(passwordEncoder.encode(password));
 
         setPasswordModifyDate(opMember.get(), LocalDateTime.now());
-
-        // log.debug("passwordModifyDate : {}", getPasswordModifyDate(opMember.get()));
 
         return RsData.of("S-1", "비밀번호가 변경되었습니다.");
     }
