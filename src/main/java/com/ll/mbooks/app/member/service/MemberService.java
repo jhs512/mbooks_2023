@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.Optional;
 
@@ -144,7 +145,7 @@ public class MemberService {
         attrService.set("member", member.getId(), "extra", "passwordModifyDate", now);
     }
 
-    private LocalDateTime getPasswordModifyDate(Member member) {
+    public LocalDateTime getPasswordModifyDate(Member member) {
         return attrService.getAsLocalDatetime("member", member.getId(), "extra", "passwordModifyDate", member.getCreateDate());
     }
 
@@ -191,6 +192,23 @@ public class MemberService {
                 "성공",
                 new AddCashRsDataBody(cashLog, newRestCash)
         );
+    }
+
+    public LocalDateTime getPasswordModifyDate(String username) {
+        return getPasswordModifyDate(findByUsername(username).get());
+    }
+
+    public boolean shouldChangePasswordDueToAge(String username) {
+        LocalDateTime passwordModifyDate = getPasswordModifyDate(username);
+
+        // 현재 날짜와 시간을 구합니다.
+        LocalDateTime now = LocalDateTime.now();
+
+        // passwordModifyDate 와 now 사이의 날짜 차이를 계산합니다.
+        long daysBetween = ChronoUnit.DAYS.between(passwordModifyDate, now);
+
+        // 90일이 지났는지 확인합니다.
+        return daysBetween >= AppConfig.getChangePasswordCycleDays();
     }
 
     @Data

@@ -45,6 +45,8 @@ custom:
     cancelAvailableSeconds: 600
   rebate:
     wholesalePriceRate: 0.5
+  member:
+    changePasswordCycleDays: 90
   site:
     name: M-BOOKS
     baseUrl: "http://localhost:8010"
